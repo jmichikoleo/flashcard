@@ -25,19 +25,19 @@
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold">Deck 1</h2>
                     <div>
-                        <button class="bg-red-600 text-white px-2 py-1 rounded mr-2" onclick="deleteDeck('deck1')">Delete Deck</button>
+                        <button class="bg-blue-900 text-white px-2 py-1 rounded mr-2" onclick="deleteDeck('deck1')">Delete Deck</button>
                         <button class="bg-blue-900 text-white px-2 py-1 rounded" onclick="openForm('deck1')">Add Card</button>
-                        <button class="bg-green-600 text-white px-2 py-1 rounded" onclick="openDeck('deck1')">Open Deck</button>
+                        <button class="bg-blue-900 text-white px-2 py-1 rounded" onclick="openDeck('deck1')">Open Deck</button>
                     </div>
                 </div>
                 <div class="space-y-2" id="deck1-cards">
                     <div class="p-4 bg-gray-100 rounded-lg shadow flex justify-between items-center">
                         <span>Card 1</span>
-                        <button class="bg-red-600 text-white px-2 py-1 rounded" onclick="deleteCard(this)">Delete</button>
+                        <button class="bg-blue-900 text-white px-2 py-1 rounded" onclick="deleteCard(this)">Delete</button>
                     </div>
                     <div class="p-4 bg-gray-100 rounded-lg shadow flex justify-between items-center">
                         <span>Card 2</span>
-                        <button class="bg-red-600 text-white px-2 py-1 rounded" onclick="deleteCard(this)">Delete</button>
+                        <button class="bg-blue-900 text-white px-2 py-1 rounded" onclick="deleteCard(this)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -59,8 +59,8 @@
                     <textarea id="cardContent" class="border rounded p-2 w-full" rows="4"></textarea>
                 </div>
                 <div class="flex justify-end">
-                    <button type="button" class="bg-blue-900 text-white px-4 py-2 rounded mr-2" onclick="closeForm()">Cancel</button>
-                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded">Add Card</button>
+                    <button type="button" class="bg-blue-600 text-white px-4 py-2 rounded mr-2" onclick="closeForm()">Cancel</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Add Card</button>
                 </div>
             </form>
         </div>
