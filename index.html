@@ -26,7 +26,7 @@
 <body class="bg-gray-100 text-gray-900">
     <div class="min-h-screen flex flex-col items-center justify-center">
         <div class="bg-white shadow-lg rounded-lg w-full max-w-6xl p-6">
-            <h1 class="text-3xl font-bold text-blue-900 mb-6">Flashcard</h1>
+            <h1 class="text-3xl font-bold text-blue-900 mb-6">Flashcard App</h1>
             <button id="addDeckBtn" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full mb-4">
                 <i class="fas fa-plus"></i> Add Deck
             </button>
@@ -71,13 +71,30 @@
         </div>
     </div>
 
+    <div id="reviewFlashcardModal" class="modal fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md text-center">
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">Review Flashcards</h2>
+            <div id="flashcardContent" class="p-4 border border-gray-300 rounded-lg mb-4">
+                <!-- Flashcard Front or Back Content -->
+            </div>
+            <button id="toggleFlashcard" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-500 mb-4">Show Back</button>
+            <div class="flex justify-between">
+                <button id="prevFlashcard" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Previous</button>
+                <button id="nextFlashcard" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Next</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const decksContainer = document.getElementById('decksContainer');
         const deckModal = document.getElementById('deckModal');
         const flashcardModal = document.getElementById('flashcardModal');
-        let activeDeckId = null; 
+        const reviewFlashcardModal = document.getElementById('reviewFlashcardModal');
+        let activeDeckId = null;
+        let currentFlashcardIndex = 0;
+        let reviewFlashcards = [];
 
-        document.getElementById('addDeckBtn').addEventListener('click', function () {
+        document.getElementById('addDeckBtn').addEventListener('click', () => {
             deckModal.classList.add('active');
         });
 
@@ -86,10 +103,13 @@
             document.getElementById('deckForm').reset();
         }
 
-        // Close flashcard modal
         function closeFlashcardModal() {
             flashcardModal.classList.remove('active');
             document.getElementById('flashcardForm').reset();
+        }
+
+        function closeReviewFlashcardModal() {
+            reviewFlashcardModal.classList.remove('active');
         }
 
         document.getElementById('deckForm').addEventListener('submit', function (event) {
@@ -106,9 +126,14 @@
                             </button>
                         </div>
                         <p class="text-sm text-gray-500" id="${deckId}-count">Cards: 0</p>
-                        <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mt-4 w-full" onclick="openFlashcardModal('${deckId}')">
-                            <i class="fas fa-plus"></i> Add Flashcard
-                        </button>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full" onclick="openFlashcardModal('${deckId}')">
+                                <i class="fas fa-plus"></i> Add Flashcard
+                            </button>
+                            <button class="bg-green-900 text-white px-4 py-2 rounded-lg hover:bg-green-700 w-full" onclick="startReview('${deckId}')">
+                                <i class="fas fa-play"></i> Review
+                            </button>
+                        </div>
                         <div class="flashcardsContainer hidden mt-4"></div>
                     </div>
                 `;
@@ -145,6 +170,57 @@
             flashcardModal.classList.add('active');
         }
 
+        function startReview(deckId) {
+            const flashcards = Array.from(document.querySelectorAll(`#${deckId} .flashcardsContainer div`));
+            if (flashcards.length > 0) {
+                reviewFlashcards = flashcards.map(card => ({
+                    front: card.querySelector('p:nth-child(1)').textContent.replace('Front: ', ''),
+                    back: card.querySelector('p:nth-child(2)').textContent.replace('Back: ', '')
+                }));
+                currentFlashcardIndex = 0;
+                showFlashcard();
+                reviewFlashcardModal.classList.add('active');
+            } else {
+                alert('No flashcards to review in this deck.');
+            }
+        }
+
+        function showFlashcard() {
+            const flashcard = reviewFlashcards[currentFlashcardIndex];
+            document.getElementById('flashcardContent').textContent = flashcard.front;
+            document.getElementById('toggleFlashcard').textContent = 'Show Back';
+        }
+
+        document.getElementById('toggleFlashcard').addEventListener('click', function () {
+            const flashcard = reviewFlashcards[currentFlashcardIndex];
+            const content = document.getElementById('flashcardContent');
+            if (content.textContent === flashcard.front) {
+                content.textContent = flashcard.back;
+                this.textContent = 'Show Front';
+            } else {
+                content.textContent = flashcard.front;
+                this.textContent = 'Show Back';
+            }
+        });
+
+        document.getElementById('prevFlashcard').addEventListener('click', function () {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                showFlashcard();
+            } else {
+                alert('This is the first flashcard.');
+            }
+        });
+
+        document.getElementById('nextFlashcard').addEventListener('click', function () {
+            if (currentFlashcardIndex < reviewFlashcards.length - 1) {
+                currentFlashcardIndex++;
+                showFlashcard();
+            } else {
+                alert('This is the last flashcard.');
+            }
+        });
+
         function deleteElement(elementId) {
             document.getElementById(elementId).remove();
         }
@@ -162,3 +238,4 @@
     </script>
 </body>
 </html>
+
