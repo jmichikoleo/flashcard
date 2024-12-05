@@ -1,74 +1,260 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard App</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #4e54c8, #8f94fb);
-            min-height: 100vh;
-            color: #ffffff;
-        }
-        .btn {
-            background: #5865f2;
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background: #4752c4;
-        }
-        .card {
-            background: #ffffff;
-            color: #333;
-            border-radius: 8px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         .modal {
             display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            align-items: center;
-            justify-content: center;
         }
         .modal.active {
             display: flex;
         }
+        .flashcardsContainer {
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
-<body>
-    <div class="flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-4xl text-center">
-            <h1 class="text-4xl font-bold mb-6">Flashcard App</h1>
-            <button id="addDeckBtn" class="btn w-full max-w-sm mb-4">
-                + Add Deck
+<body class="bg-gray-100 text-gray-900">
+    <header class="bg-blue-900 text-white">
+        <div class="container mx-auto flex justify-between items-center py-4 px-6">
+            <div class="text-2xl font-bold">Flashcard App</div>
+            <nav class="space-x-4">
+                <a href="#" class="hover:text-gray-300">Home</a>
+                <a href="#" class="hover:text-gray-300">Features</a>
+                <a href="#" class="hover:text-gray-300">Contact Us</a>
+            </nav>
+        </div>
+    </header>
+    <div class="min-h-screen flex flex-col items-center justify-center">
+        <div class="bg-white shadow-lg rounded-lg w-full max-w-6xl p-6">
+            <h1 class="text-3xl font-bold text-blue-900 mb-6">Flashcard App</h1>
+            <button id="addDeckBtn" class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-700 w-full mb-4">
+                <i class="fas fa-plus"></i> Add Deck
             </button>
-            <div id="decksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            <div id="decksContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Decks will be dynamically added here -->
+            </div>
         </div>
     </div>
 
-    <div id="deckModal" class="modal">
-        <div class="card p-6 w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-4">Create New Deck</h2>
+    <div id="deckModal" class="modal fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">New Deck</h2>
             <form id="deckForm">
                 <div class="mb-4">
                     <label for="deckName" class="block text-gray-700">Deck Name</label>
                     <input type="text" id="deckName" class="w-full p-2 border border-gray-300 rounded-lg" required />
                 </div>
                 <div class="flex justify-end space-x-4">
-                    <button type="button" class="btn bg-gray-400 hover:bg-gray-500" onclick="closeDeckModal()">Cancel</button>
-                    <button type="submit" class="btn">Create</button>
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700" onclick="closeDeckModal()">Cancel</button>
+                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Create</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <div id="flashcardModal" class="modal fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">Add Flashcard</h2>
+            <form id="flashcardForm">
+                <div class="mb-4">
+                    <label for="front" class="block text-gray-700">Front</label>
+                    <textarea id="front" class="w-full p-2 border border-gray-300 rounded-lg" rows="3" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="back" class="block text-gray-700">Back</label>
+                    <textarea id="back" class="w-full p-2 border border-gray-300 rounded-lg" rows="3" required></textarea>
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-700" onclick="closeFlashcardModal()">Cancel</button>
+                    <button type="submit" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="reviewFlashcardModal" class="modal fixed inset-0 bg-gray-800 bg-opacity-75 items-center justify-center">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md text-center relative">
+            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeReviewFlashcardModal()">
+                <i class="fas fa-times fa-lg"></i>
+            </button>
+
+            <h2 class="text-2xl font-bold text-blue-900 mb-4">Review Flashcards</h2>
+            <div id="flashcardContent" class="p-4 border border-gray-300 rounded-lg mb-4">
+                <!-- Flashcard content will be dynamically added here -->
+            </div>
+            <button id="toggleFlashcard" class="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-500 mb-4">Show Back</button>
+            <div class="flex justify-between">
+                <button id="prevFlashcard" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Previous</button>
+                <button id="nextFlashcard" class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-blue-900 text-white py-4">
+        <div class="container mx-auto text-center">
+            &copy; 2023 Flashcard App. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        const decksContainer = document.getElementById('decksContainer');
+        const deckModal = document.getElementById('deckModal');
+        const flashcardModal = document.getElementById('flashcardModal');
+        const reviewFlashcardModal = document.getElementById('reviewFlashcardModal');
+        let activeDeckId = null;
+        let currentFlashcardIndex = 0;
+        let reviewFlashcards = [];
+
+        document.getElementById('addDeckBtn').addEventListener('click', () => {
+            deckModal.classList.add('active');
+        });
+
+        function closeDeckModal() {
+            deckModal.classList.remove('active');
+            document.getElementById('deckForm').reset();
+        }
+
+        function closeFlashcardModal() {
+            flashcardModal.classList.remove('active');
+            document.getElementById('flashcardForm').reset();
+        }
+
+        function closeReviewFlashcardModal() {
+            reviewFlashcardModal.classList.remove('active');
+        }
+
+        document.getElementById('deckForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const deckName = document.getElementById('deckName').value.trim();
+            if (deckName) {
+                const deckId = `deck-${Date.now()}`;
+                const deckHtml = `
+                    <div class="bg-gray-200 p-4 rounded-lg shadow-md" id="${deckId}">
+                        <div class="flex justify-between items-center">
+                            <p class="text-lg font-bold text-gray-700">${deckName}</p>
+                            <button class="text-red-500 hover:text-red-700" onclick="deleteElement('${deckId}')">
+                                <i class="fas fa-trash"></i> Delete Deck
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-500" id="${deckId}-count">Cards: 0</p>
+                        <div class="flex space-x-2 mt-4">
+                            <button class="bg-blue-900 text-white px-4 py-2 rounded-lg hover:bg-blue-700 w-full" onclick="openFlashcardModal('${deckId}')">
+                                <i class="fas fa-plus"></i> Add Flashcard
+                            </button>
+                            <button class="bg-green-900 text-white px-4 py-2 rounded-lg hover:bg-green-700 w-full" onclick="startReview('${deckId}')">
+                                <i class="fas fa-play"></i> Review
+                            </button>
+                        </div>
+                        <div class="flashcardsContainer hidden mt-4"></div>
+                    </div>
+                `;
+                decksContainer.insertAdjacentHTML('beforeend', deckHtml);
+            }
+            closeDeckModal();
+        });
+
+        document.getElementById('flashcardForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const front = document.getElementById('front').value.trim();
+            const back = document.getElementById('back').value.trim();
+
+            if (front && back) {
+                const flashcardId = `flashcard-${Date.now()}`;
+                const flashcardHtml = `
+                    <div class="bg-gray-300 p-3 rounded-lg mb-2" id="${flashcardId}">
+                        <p class="text-gray-700"><strong>Front:</strong> ${front}</p>
+                        <p class="text-gray-700"><strong>Back:</strong> ${back}</p>
+                        <button class="text-red-500 hover:text-red-700 mt-2" onclick="deleteFlashcard('${flashcardId}', '${activeDeckId}')">
+                            <i class="fas fa-trash"></i> Delete Card
+                        </button>
+                    </div>
+                `;
+                const flashcardsContainer = document.querySelector(`#${activeDeckId} .flashcardsContainer`);
+                flashcardsContainer.insertAdjacentHTML('beforeend', flashcardHtml);
+                updateCardCount(activeDeckId, 1);
+            }
+            closeFlashcardModal();
+        });
+
+        function openFlashcardModal(deckId) {
+            activeDeckId = deckId;
+            flashcardModal.classList.add('active');
+        }
+
+        function startReview(deckId) {
+            const flashcards = Array.from(document.querySelectorAll(`#${deckId} .flashcardsContainer div`));
+            if (flashcards.length > 0) {
+                reviewFlashcards = flashcards.map(card => ({
+                    front: card.querySelector('p:nth-child(1)').textContent.replace('Front: ', ''),
+                    back: card.querySelector('p:nth-child(2)').textContent.replace('Back: ', '')
+                }));
+                currentFlashcardIndex = 0;
+                showFlashcard();
+                reviewFlashcardModal.classList.add('active');
+            } else {
+                alert('No flashcards to review in this deck.');
+            }
+        }
+
+        function showFlashcard() {
+            const flashcard = reviewFlashcards[currentFlashcardIndex];
+            document.getElementById('flashcardContent').textContent = flashcard.front;
+            document.getElementById('toggleFlashcard').textContent = 'Show Back';
+        }
+
+        document.getElementById('toggleFlashcard').addEventListener('click', function () {
+            const flashcard = reviewFlashcards[currentFlashcardIndex];
+            const content = document.getElementById('flashcardContent');
+            if (content.textContent === flashcard.front) {
+                content.textContent = flashcard.back;
+                this.textContent = 'Show Front';
+            } else {
+                content.textContent = flashcard.front;
+                this.textContent = 'Show Back';
+            }
+        });
+
+        document.getElementById('prevFlashcard').addEventListener('click', function () {
+            if (currentFlashcardIndex > 0) {
+                currentFlashcardIndex--;
+                showFlashcard();
+            } else {
+                alert('This is the first flashcard.');
+            }
+        });
+
+        document.getElementById('nextFlashcard').addEventListener('click', function () {
+            if (currentFlashcardIndex < reviewFlashcards.length - 1) {
+                currentFlashcardIndex++;
+                showFlashcard();
+            } else {
+                alert('This is the last flashcard.');
+            }
+        });
+
+        function deleteElement(elementId) {
+            document.getElementById(elementId).remove();
+        }
+
+        function deleteFlashcard(flashcardId, deckId) {
+            document.getElementById(flashcardId).remove();
+            updateCardCount(deckId, -1);
+        }
+
+        function updateCardCount(deckId, change) {
+            const countElement = document.getElementById(`${deckId}-count`);
+            const currentCount = parseInt(countElement.textContent.replace('Cards: ', ''), 10);
+            countElement.textContent = `Cards: ${currentCount + change}`;
+        }
+    </script>
 </body>
 </html>
