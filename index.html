@@ -2,7 +2,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flashcard App</title>
+    <title>Flashcard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,13 +23,23 @@
     </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <header class="bg-blue-900 text-white">
-        <div class="container mx-auto flex justify-between items-center py-4 px-6">
-            <div class="text-2xl font-bold">Flashcard App</div>
-            <nav class="space-x-4">
-                <a href="#" class="hover:text-gray-300">Home</a>
-                <a href="#" class="hover:text-gray-300">Features</a>
-                <a href="#" class="hover:text-gray-300">Contact Us</a>
+   <header class="bg-blue-900 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-3xl font-bold text-gray-200 uppercase">Odyssey</h1>
+            <nav>
+                <ul class="flex space-x-4 items-center text-white">
+                    <li><a href="https://jmichikoleo.github.io/odyssey/" class="hover:text-yellow-400">Home</a></li>
+                    <li class="relative group">
+                        <a href="#features" class="hover:text-yellow-400">Features <i class="fas fa-caret-down"></i></a>
+                        <ul class="absolute hidden group-hover:block bg-blue-900 mt-2 rounded-lg shadow-lg">
+                            <li><a href="https://jmichikoleo.github.io/flashcard/" class="block px-4 py-2 hover:bg-blue-800">Flashcards</a></li>
+                            <li><a href="https://jmichikoleo.github.io/notes/" class="block px-4 py-2 hover:bg-blue-800">Notes</a></li>
+                            <li><a href="https://jmichikoleo.github.io/gpt/" class="block px-4 py-2 hover:bg-blue-800">Study with GPT Coming Soon</a></li>
+                            <li><a href="#" class="block px-4 py-2 hover:bg-blue-800">New Features Coming Soon</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="https://jmichikoleo.github.io/stateoftheart/" class="hover:text-yellow-400">Contact Us</a></li>
+                </ul>
             </nav>
         </div>
     </header>
